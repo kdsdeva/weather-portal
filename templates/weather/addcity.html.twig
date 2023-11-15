@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add City{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row m-0 p-5 justify-content-center" style="min-height: 60vh">
+            <div class="addcity-form col-md-5 p-3 bg-white">
+                <h4>Add City</h4>
+                <div class="p-3">
+                    {{ form_start(form,{ 'attr': {'novalidate': 'novalidate'}}) }}
+                    <div class="form-group">
+                        {{ form_label(form.cityname) }}
+                        {{ form_widget(form.cityname) }}
+                        {{ form_errors(form.cityname) }}
+                    </div>
+                    <div class="py-3">
+                        <button type="submit" class="btn btn-primary city-submit-btn">
+                            Submit
+                        </button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    {{ parent() }}
+{% endblock %}

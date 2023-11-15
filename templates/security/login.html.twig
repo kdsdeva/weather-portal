@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    {{ encore_entry_link_tags('app') }}
+</head>
+<body>
+<div class="container">
+    <div class="row m-0 min-vh-100 justify-content-center align-items-center">
+        <div class="col-lg-7 p-5 bg-white">
+            <form method="post">
+
+                {% if app.user %}
+                    <div class="mb-3">
+                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+
+                <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Please sign in</h1>
+                </div>
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+                <div class="form-group">
+                    <label class="form-label" for="inputEmail">Email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control"
+                           autocomplete="email" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="inputPassword">Password</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control"
+                           autocomplete="current-password" required>
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button class="m-2 btn btn-primary btn-user btn-block" type="submit">
+                    Sign in
+                </button>
+                <div class="text-center">
+                    <a class="small" href="{{ path('app_register') }}">Don't have an account? Register!</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

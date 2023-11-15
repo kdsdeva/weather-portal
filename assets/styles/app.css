@@ -1,0 +1,20 @@
+@import "~bootstrap";
+@import "~bootstrap-icons";
+body {
+    background-color: #d7e0e3;
+}
+.form-group{
+     padding: 5px;
+ }
+.small{
+    text-decoration: none;
+}
+.navbar{
+    background: #5c5eb4;
+}
+.navbar-brand,.navbar-nav .nav-link.active, .nav-link{
+    color: white !important;
+}
+.dropdown-toggle .bi-person-circle{
+    font-size: 25px;
+}

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notifications{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .message{
+            padding: 10px;
+            border-bottom: 1px solid lightgray;
+        }
+        .delete-notification{
+            display: block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            background: #ea6b6b;
+            text-decoration: none;
+            color: white;
+            font-size: 12px;
+            margin: 0 5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row m-0 p-5 justify-content-center" style="min-height: 60vh">
+            <div class="col-md-10 bg-white p-3">
+                <h4>Notifications <i class="bi-bell"></i></h4>
+                <div class="p-3">
+                    {% for notification in notifications %}
+                        <div class="notification">
+                            <div class="message m-0 d-flex w-100">
+                                <div class="col-md-9" style="font-weight: 600;">{{ notification.message }}</div>
+                                <div class="col-md-2 d-flex">
+                                    <div>{{ notification.createdAt|date('d M Y H:i') }}</div>
+                                </div>
+                                <div>
+                                    <a class="col delete-notification"
+                                       href="{{ path('delete_notifications',{'id':notification.id}) }}">
+                                        <i class="bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    {{ parent() }}
+{% endblock %}

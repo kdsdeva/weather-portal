@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Homepage{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('weather') }}
+{% endblock %}
+
+{% block body %}
+    <div class="container ">
+        <div class="row m-0 p-5" style="min-height: 90vh">
+            {% for message in app.flashes('alert') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <div class="col-md-12 p-3 bg-white">
+                <div class="row m-0 weather-list">
+                    <div class="city-weather">
+                        <div class="d-flex justify-content-between">
+                            <h5>City Weather</h5>
+                            <div>
+                                <a href="{{ path('notifications') }}" class="notification-bell">
+                                    <i class="bi bi-bell-fill position-relative"><span class="notification-active"></span></i>
+                                </a>
+                                <a href="{{ path('add_city') }}" class="add-city btn btn-secondary">
+                                    Add City
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="weather-list row m-0 align-items-center p-3">
+                            {% for city in cities %}
+                                {% for weather in weathers %}
+                                    {% if weather and weather['query']['custom_id'] == city.id %}
+                                        <div class="col-md-4 p-3">
+                                            <div class="weather">
+                                                <p><i class="bi-geo-alt-fill p-1"></i>{{ weather['query']['location']['name'] }}</p>
+                                                <div class="d-flex">
+                                                    <img width="80" height="80"
+                                                         src="{{ weather['query']['current']['condition']['icon'] }}">
+                                                    <div class="p-2">
+                                                        <h2>{{ weather['query']['current']['temp_c'] }}&deg;C</h2>
+                                                        <p>{{ weather['query']['current']['condition']['text'] }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex">
+                                                    {% if city.alerttemperature %}
+                                                        <div class="px-2" style="font-weight: 500;">
+                                                            {{ city.alerttemperature}} &deg;C
+                                                        </div>
+
+                                                    {% endif %}
+                                                    <a class="modify-temp"
+                                                       href="{{ path('set_temperature_alert',{'id':city.id}) }}">
+                                                        {% if city.alerttemperature %}
+                                                            Reset Temperature
+                                                        {% else %}
+                                                            Set Temperature Alert
+                                                        {% endif %}
+                                                    </a>
+                                                    <a class="delete-city"
+                                                       href="{{ path('delete_city',{'id':city.id}) }}">
+                                                        <i class="bi-trash-fill"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            let i = 1;
+            function clickButton() {
+
+                $.ajax({
+                    url: "/temperaturealert",
+                    type: 'POST',
+                    success: function(data) {
+                        if (data.data == true){
+                            $('.notification-active').show();
+                        }
+                    },
+                    error: function(error) {
+                        console.error("Error sending location data", error);
+                    }
+                });
+                i++;
+                if (i === 31) {
+                    clearInterval(interval);
+                }
+            }
+            const interval = setInterval(clickButton, 500000);
+
+            function getCurrentLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        successCallback,
+                        errorCallback,
+                        { enableHighAccuracy: true }
+                    );
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            }
+            function successCallback(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                console.log("Latitude: " + latitude);
+                console.log("Longitude: " + longitude);
+                $.ajax({
+                    url: "{{ path('add_current_location') }}",
+                    type: 'POST',
+                    data: {
+                        latitude: latitude,
+                        longitude: longitude
+                    },
+                    success: function(data) {
+                        if (data.data == true){
+                            console.log('yes');
+                            window.location.reload()
+                        }
+                    },
+                    error: function(error) {
+                        console.error("Error sending location data", error);
+                    }
+                });
+            }
+            function errorCallback(error) {
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("User denied the request for geolocation.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("Location information is unavailable.");
+                        break;
+                    case error.TIMEOUT:
+                        alert("The request to get user location timed out.");
+                        break;
+                }
+            }
+            getCurrentLocation();
+
+        });
+
+
+    </script>
+
+{% endblock %}
